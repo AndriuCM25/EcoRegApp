@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg_screen">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/surface"
+        android:elevation="4dp"
+        app:title="Nuevo Registro"
+        app:titleTextColor="@color/text_primary"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationIconTint="@color/text_primary"/>
+
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:padding="16dp">
+
+            <!-- Tipo de residuo -->
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="TIPO DE RESIDUO" android:textColor="@color/text_secondary"
+                android:textSize="11sp" android:textStyle="bold" android:letterSpacing="0.08"
+                android:layout_marginBottom="8dp"/>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_tipo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.chip.Chip android:id="@+id/chip_plastico"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="♻️ Plástico" android:tag="plastico" android:checked="true"
+                    app:chipBackgroundColor="@color/chip_selector"/>
+
+                <com.google.android.material.chip.Chip android:id="@+id/chip_organico"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="🌿 Orgánico" android:tag="organico"
+                    app:chipBackgroundColor="@color/chip_selector"/>
+
+                <com.google.android.material.chip.Chip android:id="@+id/chip_papel"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="📄 Papel" android:tag="papel"
+                    app:chipBackgroundColor="@color/chip_selector"/>
+
+                <com.google.android.material.chip.Chip android:id="@+id/chip_metal"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="🔩 Metal" android:tag="metal"
+                    app:chipBackgroundColor="@color/chip_selector"/>
+
+                <com.google.android.material.chip.Chip android:id="@+id/chip_vidrio"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="🫙 Vidrio" android:tag="vidrio"
+                    app:chipBackgroundColor="@color/chip_selector"/>
+
+                <com.google.android.material.chip.Chip android:id="@+id/chip_peligroso"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="⚠️ Peligroso" android:tag="peligroso"
+                    app:chipBackgroundColor="@color/chip_selector"/>
+            </com.google.android.material.chip.ChipGroup>
+
+            <!-- Peso -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_peso"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:hint="Peso (kg)" app:startIconDrawable="@drawable/ic_weight"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxCornerRadiusTopStart="14dp" app:boxCornerRadiusTopEnd="14dp"
+                app:boxCornerRadiusBottomStart="14dp" app:boxCornerRadiusBottomEnd="14dp"
+                android:layout_marginBottom="12dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_peso"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" android:hint="ej: 5.20"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Ubicación -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:hint="Ubicación" app:startIconDrawable="@drawable/ic_location"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxCornerRadiusTopStart="14dp" app:boxCornerRadiusTopEnd="14dp"
+                app:boxCornerRadiusBottomStart="14dp" app:boxCornerRadiusBottomEnd="14dp"
+                android:layout_marginBottom="12dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_ubicacion"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:hint="ej: Planta Industrial A"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Zona -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:hint="Zona / Sector" app:startIconDrawable="@drawable/ic_map_pin"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxCornerRadiusTopStart="14dp" app:boxCornerRadiusTopEnd="14dp"
+                app:boxCornerRadiusBottomStart="14dp" app:boxCornerRadiusBottomEnd="14dp"
+                android:layout_marginBottom="12dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_zona"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:hint="ej: Zona B — Pasillo 3"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Observaciones -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:hint="Observaciones (opcional)"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxCornerRadiusTopStart="14dp" app:boxCornerRadiusTopEnd="14dp"
+                app:boxCornerRadiusBottomStart="14dp" app:boxCornerRadiusBottomEnd="14dp"
+                android:layout_marginBottom="14dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_observaciones"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:minLines="2" android:gravity="top"
+                    android:inputType="textMultiLine"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- EPP Alert (se muestra solo para peligroso) -->
+            <LinearLayout
+                android:id="@+id/layout_epp"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_epp_alert"
+                android:padding="14dp"
+                android:layout_marginBottom="14dp"
+                android:visibility="gone">
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="⚠️ Residuo Peligroso — Confirmar EPP"
+                    android:textColor="#8B1A1A" android:textSize="13sp" android:textStyle="bold"
+                    android:layout_marginBottom="10dp"/>
+
+                <CheckBox android:id="@+id/cb_guantes"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Guantes de nitrilo"
+                    android:textColor="#8B1A1A" android:textSize="13sp"
+                    android:buttonTint="@color/danger"/>
+
+                <CheckBox android:id="@+id/cb_mascarilla"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Mascarilla N95"
+                    android:textColor="#8B1A1A" android:textSize="13sp"
+                    android:buttonTint="@color/danger"/>
+
+                <CheckBox android:id="@+id/cb_lentes"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Lentes de seguridad"
+                    android:textColor="#8B1A1A" android:textSize="13sp"
+                    android:buttonTint="@color/danger"/>
+            </LinearLayout>
+
+            <!-- Botones -->
+            <Button android:id="@+id/btn_guardar"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="💾 Guardar Registro"
+                android:padding="15dp" android:textSize="15sp" android:textStyle="bold"
+                android:backgroundTint="@color/primary" android:textColor="@android:color/white"
+                app:cornerRadius="14dp" android:layout_marginBottom="10dp"/>
+
+            <Button android:id="@+id/btn_guardar_nuevo"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="💾 Guardar y Nuevo"
+                android:padding="13dp" android:textSize="14sp" android:textStyle="bold"
+                android:backgroundTint="@color/surface2" android:textColor="@color/primary"
+                app:cornerRadius="14dp" android:layout_marginBottom="20dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:strokeColor="@color/accent"/>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

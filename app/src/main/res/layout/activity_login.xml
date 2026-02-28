@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_login_gradient"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <!-- LOGO -->
+        <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:src="@drawable/eco_reg_logo"
+            android:scaleType="fitCenter"
+            android:contentDescription="EcoRegApp Logo"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Tagline -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ECOLIM S.A.C. · Gestión de Residuos · NTP 900.058"
+            android:textColor="#80FFFFFF"
+            android:textSize="12sp"
+            android:layout_marginBottom="28dp"/>
+
+        <!-- CARD LOGIN -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#14FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <!-- ID Operario -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="ID de Operario"
+                    app:startIconDrawable="@drawable/ic_badge"
+                    app:startIconTint="#B0FFD97E"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:boxStrokeColor="#40FFFFFF"
+                    app:hintTextColor="#80FFFFFF"
+                    android:layout_marginBottom="14dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_operario_id"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:textColorHint="#60FFFFFF"
+                        android:inputType="textCapCharacters"
+                        android:text="OP-42"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Password -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Contraseña"
+                    app:startIconDrawable="@drawable/ic_lock"
+                    app:startIconTint="#B0FFD97E"
+                    app:endIconMode="password_toggle"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:boxStrokeColor="#40FFFFFF"
+                    app:hintTextColor="#80FFFFFF"
+                    android:layout_marginBottom="20dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:textColorHint="#60FFFFFF"
+                        android:inputType="textPassword"
+                        android:text="ecolim2026"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Botón -->
+                <Button
+                    android:id="@+id/btn_ingresar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ingresar al sistema"
+                    android:padding="16dp"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="14dp"
+                    android:backgroundTint="@color/primary"/>
+
+                <!-- Progress -->
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="12dp"
+                    android:visibility="gone"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Nota -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Demo: cualquier ID de la lista · contraseña: ecolim2026"
+            android:textColor="#50FFFFFF"
+            android:textSize="11sp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="32dp"
+            android:gravity="center"/>
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment android:id="@+id/homeFragment"
+        android:name="com.ecolim.ecoregapp.ui.fragments.HomeFragment"
+        android:label="Inicio">
+        <action android:id="@+id/action_home_to_registro"
+            app:destination="@id/registroFragment"/>
+        <action android:id="@+id/action_home_to_importar"
+            app:destination="@id/importarFragment"/>
+        <action android:id="@+id/action_home_to_historial"
+            app:destination="@id/historialFragment"/>
+        <action android:id="@+id/action_home_to_reportes"
+            app:destination="@id/reportesFragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/registroFragment"
+        android:name="com.ecolim.ecoregapp.ui.fragments.RegistroFragment"
+        android:label="Nuevo Registro">
+        <action android:id="@+id/action_registro_to_success"
+            app:destination="@id/successFragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/importarFragment"
+        android:name="com.ecolim.ecoregapp.ui.fragments.ImportarFragment"
+        android:label="Importar"/>
+
+    <fragment android:id="@+id/historialFragment"
+        android:name="com.ecolim.ecoregapp.ui.fragments.HistorialFragment"
+        android:label="Historial"/>
+
+    <fragment android:id="@+id/reportesFragment"
+        android:name="com.ecolim.ecoregapp.ui.fragments.ReportesFragment"
+        android:label="Reportes"/>
+
+    <fragment android:id="@+id/successFragment"
+        android:name="com.ecolim.ecoregapp.ui.fragments.SuccessFragment"
+        android:label="Éxito">
+        <action android:id="@+id/action_success_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true"/>
+        <action android:id="@+id/action_success_to_registro"
+            app:destination="@id/registroFragment"
+            app:popUpTo="@id/registroFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+</navigation>
