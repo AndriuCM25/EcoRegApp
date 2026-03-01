@@ -1,144 +1,165 @@
-♻️ EcoRegApp
+#♻️ EcoRegApp
 
 Sistema de Gestión de Residuos Industriales
-📱 Android Nativo (Java)
+📱 Aplicación Android Nativa
 🏢 ECOLIM S.A.C.
 📦 Versión 1.0 — Marzo 2026
 
-📌 Descripción General
+1. Descripción General del Proyecto
 
-EcoRegApp es una aplicación Android nativa desarrollada para ECOLIM S.A.C., diseñada para que operarios industriales puedan registrar, gestionar, analizar y exportar residuos industriales de forma eficiente, segura y en tiempo real.
+EcoRegApp es una aplicación Android nativa desarrollada para ECOLIM S.A.C. que permite a los operarios industriales registrar, gestionar, analizar y exportar datos de residuos industriales de manera eficiente, segura y en tiempo real.
 
-La aplicación funciona correctamente en entornos con conectividad limitada, almacenando los datos localmente y sincronizándolos cuando hay conexión disponible.
+La aplicación está diseñada para funcionar en entornos industriales con conectividad limitada, almacenando los datos localmente y sincronizándolos cuando hay conexión disponible.
 
-🛠️ Tecnologías Utilizadas
+Tecnologías base
 
-Lenguaje: Java
+Plataforma: Android (Java)
 
-Plataforma: Android
+Arquitectura: MVVM (Model – View – ViewModel)
 
-Arquitectura: MVVM
-
-Base de datos: Room (SQLite)
+Base de datos: Room (SQLite local)
 
 Navegación: Navigation Component + BottomNavigationView
 
-Gráficos: MPAndroidChart
+minSdk: API 24 (Android 7.0)
 
-Exportaciones: PDF (iText7) y CSV (OpenCSV)
+targetSdk: API 34 (Android 14)
 
-📱 Compatibilidad Android
-Parámetro	Versión
-minSdk	API 24 (Android 7.0)
-targetSdk	API 34 (Android 14)
-🔐 Credenciales de Acceso (Demo)
-Usuario	Contraseña	Rol	Turno	Planta
-OP-01	ecolim2026	Operario	Mañana	Planta A
-OP-42	ecolim2026	Operario	Tarde	Planta A
-OP-10	ecolim2026	Operario	Noche	Planta B
-ADMIN	ecolim2026	Administrador	Mañana	Planta C
-📂 Estructura del Proyecto
+2. Credenciales de Acceso (Demo)
+
+| Usuario | Contraseña | Rol           | Turno  | Planta   |
+| ------- | ---------- | ------------- | ------ | -------- |
+| OP-01   | ecolim2026 | Operario      | Mañana | Planta A |
+| OP-42   | ecolim2026 | Operario      | Tarde  | Planta A |
+| OP-10   | ecolim2026 | Operario      | Noche  | Planta B |
+| ADMIN   | ecolim2026 | Administrador | Mañana | Planta C |
+
+3. Estructura del Proyecto
+
+El proyecto sigue la estructura estándar de Android Studio con arquitectura MVVM:
+
 app/src/main/java/com/ecolim/ecoregapp/
 │
 ├── ui/
-│   ├── activities/
-│   ├── fragments/
-│   └── adapters/
+│   ├── activities/        LoginActivity, MainActivity
+│   ├── fragments/         HomeFragment, RegistroFragment,
+│   │                      HistorialFragment, ReportesFragment,
+│   │                      ImportarFragment, ProfileFragment,
+│   │                      SuccessFragment
+│   └── adapters/          ResiduoAdapter
 │
 ├── data/
 │   └── local/
-│       ├── entity/
-│       ├── dao/
-│       └── database/
+│       ├── entity/        Residuo.java
+│       ├── dao/           ResiduoDao.java
+│       └── database/      AppDatabase.java
 │
-├── viewmodel/
-├── utils/
-│
-app/src/main/res/
-├── layout/
-├── drawable/
-├── navigation/
-├── menu/
-├── xml/
-└── values/
-
-Arquitectura MVVM con separación clara de responsabilidades.
-
-🧩 Módulos Principales
-🔑 Login
+├── viewmodel/             ResiduoViewModel.java
+├── utils/                 SessionManager, FileManager
+4. Pantallas y Módulos
+4.1 Login
 
 Autenticación por ID y contraseña
 
+Usuarios hardcoded para pruebas
+
 Persistencia de sesión con SharedPreferences
 
-Login automático si hay sesión activa
+Redirección automática si existe sesión activa
 
-🏠 Home
+4.2 Home
 
-Saludo dinámico según hora
+Saludo dinámico según la hora
 
 Resumen de residuos del día
 
-Acciones rápidas
+Barra de progreso de meta diaria (63 kg)
 
-Últimos registros recientes
+Estadísticas rápidas
 
-➕ Nuevo Registro
+Accesos directos a módulos
 
-Selección de tipo de residuo
+Últimos 5 registros recientes
 
-Validaciones según peligrosidad
+4.3 Nuevo Registro
 
-Captura de foto evidencia
+Selección de tipo mediante ChipGroup
 
-Guardado local con Room
+Campos: peso, ubicación, zona y observaciones
 
-📜 Historial
+Validación obligatoria de EPP para residuos peligrosos
+
+Captura de foto evidencia con FileProvider
+
+Guardado en Room con fecha automática
+
+4.4 Historial
 
 Lista completa de registros
 
-Ordenados por fecha
+Ordenados por fecha descendente
 
-RecyclerView optimizado
+RecyclerView con adapter personalizado
 
-📊 Reportes
+4.5 Reportes
 
-Filtros por fecha y tipo
+Filtros por periodo y fecha
 
-Gráficos de barras y dona
+Gráficos de barras y dona (MPAndroidChart)
 
-Exportación a PDF y CSV
+Exportación a PDF e CSV
 
-📥 Importar
+Estadísticas agregadas
 
-Importación masiva desde CSV
+4.6 Importar
 
-Procesamiento en segundo plano con WorkManager
+Importación de archivos CSV
 
-👤 Perfil
+Inserción masiva con WorkManager
+
+Estructura compatible definida
+
+4.7 Perfil
 
 Foto de perfil persistente
 
 Edición de datos personales
 
+Cambio de contraseña
+
 Preferencias de sincronización
+
+Limpieza de caché
 
 Cierre de sesión seguro
 
-🗂️ Modelo de Datos (Residuo)
-Campo	Tipo	Descripción
-id	int	PK autoincrement
-tipo	String	Categoría del residuo
-pesoKg	double	Peso en kg
-fecha	String	yyyy-MM-dd
-planta	String	Planta
-zona	String	Zona
-operarioId	String	ID del operario
-turno	String	Turno
-observaciones	String	Notas / Foto
-eppConfirmado	boolean	Seguridad validada
-sincronizado	boolean	Estado de sync
-📦 Dependencias Principales
+4.8 Pantalla de Éxito
+
+Confirmación visual del registro guardado
+
+Acceso rápido a Home o nuevo registro
+
+5. Arquitectura y Modelo de Datos
+
+Entidad Residuo
+| Campo         | Tipo    | Descripción                |
+| ------------- | ------- | -------------------------- |
+| id            | int     | PK autoincrement           |
+| tipo          | String  | Tipo de residuo            |
+| pesoKg        | double  | Peso en kg                 |
+| fecha         | String  | yyyy-MM-dd                 |
+| planta        | String  | Planta de origen           |
+| zona          | String  | Zona                       |
+| operarioId    | String  | ID operario                |
+| turno         | String  | Turno                      |
+| observaciones | String  | Notas o referencia de foto |
+| eppConfirmado | boolean | Validación EPP             |
+| sincronizado  | boolean | Estado de sincronización   |
+
+Flujo de Datos
+UI → ViewModel → Repository → DAO → Room (SQLite)
+
+6. Dependencias Principales
 
 Room
 
@@ -161,23 +182,61 @@ Lottie
 Repositorio adicional requerido:
 
 maven { url 'https://jitpack.io' }
-🔐 Permisos Requeridos
+7. Permisos y Configuración
+
+Permisos usados:
+
 <uses-permission android:name="android.permission.CAMERA" />
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-Uso obligatorio de FileProvider para cámara y archivos.
+Uso obligatorio de FileProvider para cámara y exportación de archivos.
 
-📄 Archivos de Prueba Incluidos
-Archivo	Formato	Registros
-residuos_ecolim_100.csv	CSV	100
-residuos_ecolim_400.csv	CSV	400
-residuos_ecolim_100.pdf	PDF	100
-residuos_ecolim_100.txt	TXT	100
-⚙️ Instalación y Ejecución
+8. Navegación
+
+La app utiliza Navigation Component con los siguientes destinos:
+
+Home
+
+Historial
+
+Importar
+
+Reportes
+
+Perfil
+
+Registro
+
+Pantalla de éxito
+
+El acceso a “Nuevo Registro” se realiza desde Home.
+
+9. Categorías de Residuos
+
+| Categoría | EPP requerido                    |
+| --------- | -------------------------------- |
+| Plástico  | No                               |
+| Orgánico  | No                               |
+| Papel     | No                               |
+| Metal     | No                               |
+| Vidrio    | No                               |
+| Peligroso | Sí (guantes, mascarilla, lentes) |
+| Pendiente | No                               |
+
+10. Archivos de Datos de Prueba
+
+| Archivo                 | Formato | Registros |
+| ----------------------- | ------- | --------- |
+| residuos_ecolim_100.csv | CSV     | 100       |
+| residuos_ecolim_400.csv | CSV     | 400       |
+| residuos_ecolim_100.pdf | PDF     | 100       |
+| residuos_ecolim_100.txt | TXT     | 100       |
+
+11. Instalación del Proyecto
 Requisitos
 
-Android Studio Hedgehog+
+Android Studio Hedgehog o superior
 
 JDK 8+
 
@@ -185,35 +244,32 @@ Android SDK (API 24–34)
 
 Pasos
 
-Clonar el repositorio
+Clonar el proyecto
 
 Abrir en Android Studio
 
-Verificar gradle.properties
+Verificar configuración de Gradle
 
-Ejecutar Rebuild Project
+Rebuild Project
 
-Run en emulador o dispositivo físico
+Ejecutar en emulador o dispositivo físico
 
-🚀 Próximas Mejoras
+12. Próximos Pasos
 
-🌙 Modo oscuro real
+Implementar modo oscuro
 
-🌐 Sincronización con API REST
+Sincronización con API REST
 
-📊 Estadísticas reales en Perfil
+Estadísticas reales en perfil
 
-🖼️ Galería de evidencias
+Galería de fotos de evidencia
 
-🔔 Notificaciones push
+Filtros avanzados en historial
 
-🔍 Filtros avanzados en Historial
+Dashboard administrativo
 
-🧠 Clasificación con ML Kit
+📜 Información Final
 
-📈 Dashboard administrativo
-
-📜 Licencia
-
+EcoRegApp v1.0
 Proyecto académico / empresarial
-© ECOLIM S.A.C. — 2026
+ECOLIM S.A.C. — Marzo 2026
