@@ -1,277 +1,375 @@
-#♻️ EcoRegApp
+# 🌿 EcoRegApp
 
-Sistema de Gestión de Residuos Industriales
-📱 Aplicación Android Nativa
-🏢 ECOLIM S.A.C.
-📦 Versión 1.0 — Marzo 2026
+> **Sistema de Gestión de Residuos Industriales**  
+> Desarrollado para **ECOLIM S.A.C.** | Android nativo en Java | Versión 1.0 | Marzo 2026
 
-1. Descripción General del Proyecto
+---
 
-EcoRegApp es una aplicación Android nativa desarrollada para ECOLIM S.A.C. que permite a los operarios industriales registrar, gestionar, analizar y exportar datos de residuos industriales de manera eficiente, segura y en tiempo real.
+## 📋 Descripción General
 
-La aplicación está diseñada para funcionar en entornos industriales con conectividad limitada, almacenando los datos localmente y sincronizándolos cuando hay conexión disponible.
+EcoRegApp es una aplicación Android nativa que permite a los operarios industriales **registrar, gestionar, analizar y exportar datos de residuos** de manera eficiente y segura. Diseñada para funcionar en entornos industriales con conectividad limitada, almacena los datos localmente y sincroniza cuando hay conexión disponible.
 
-Tecnologías base
+| Característica | Detalle |
+|---|---|
+| **Plataforma** | Android (Java) |
+| **Arquitectura** | MVVM (Model-View-ViewModel) |
+| **Base de datos** | Room (SQLite local) |
+| **Navegación** | Navigation Component + BottomNavigationView |
+| **Min SDK** | API 24 (Android 7.0 Nougat) |
+| **Target SDK** | API 34 (Android 14) |
 
-Plataforma: Android (Java)
+---
 
-Arquitectura: MVVM (Model – View – ViewModel)
+## 🔐 Credenciales de Acceso Demo
 
-Base de datos: Room (SQLite local)
+| Usuario / ID | Contraseña | Rol | Turno | Planta |
+|---|---|---|---|---|
+| `OP-01` | `ecolim2026` | Operario | Mañana | Planta A |
+| `OP-42` | `ecolim2026` | Operario | Tarde | Planta A |
+| `OP-10` | `ecolim2026` | Operario | Noche | Planta B |
+| `ADMIN` | `ecolim2026` | Administrador | Mañana | Planta C |
 
-Navegación: Navigation Component + BottomNavigationView
+---
 
-minSdk: API 24 (Android 7.0)
+## 📁 Estructura del Proyecto
 
-targetSdk: API 34 (Android 14)
-
-2. Credenciales de Acceso (Demo)
-
-| Usuario | Contraseña | Rol           | Turno  | Planta   |
-| ------- | ---------- | ------------- | ------ | -------- |
-| OP-01   | ecolim2026 | Operario      | Mañana | Planta A |
-| OP-42   | ecolim2026 | Operario      | Tarde  | Planta A |
-| OP-10   | ecolim2026 | Operario      | Noche  | Planta B |
-| ADMIN   | ecolim2026 | Administrador | Mañana | Planta C |
-
-3. Estructura del Proyecto
-
-El proyecto sigue la estructura estándar de Android Studio con arquitectura MVVM:
-
+```
 app/src/main/java/com/ecolim/ecoregapp/
-│
 ├── ui/
-│   ├── activities/        LoginActivity, MainActivity
-│   ├── fragments/         HomeFragment, RegistroFragment,
-│   │                      HistorialFragment, ReportesFragment,
-│   │                      ImportarFragment, ProfileFragment,
-│   │                      SuccessFragment
-│   └── adapters/          ResiduoAdapter
-│
+│   ├── activities/         # LoginActivity, MainActivity
+│   ├── fragments/          # HomeFragment, RegistroFragment, HistorialFragment,
+│   │                       # ReportesFragment, ImportarFragment, ProfileFragment,
+│   │                       # SuccessFragment
+│   └── adapters/           # ResiduoAdapter
 ├── data/
 │   └── local/
-│       ├── entity/        Residuo.java
-│       ├── dao/           ResiduoDao.java
-│       └── database/      AppDatabase.java
-│
-├── viewmodel/             ResiduoViewModel.java
-├── utils/                 SessionManager, FileManager
+│       ├── entity/         # Residuo.java
+│       ├── dao/            # ResiduoDao.java
+│       └── database/       # AppDatabase.java
+├── utils/                  # SessionManager.java, FileManager.java
+└── viewmodel/              # ResiduoViewModel.java
 
+app/src/main/res/
+├── layout/                 # 10+ XMLs de pantallas y diálogos
+├── drawable/               # 30+ XMLs de fondos, íconos, badges
+├── navigation/             # nav_graph.xml
+├── menu/                   # bottom_nav_menu.xml
+├── xml/                    # file_provider_paths.xml
+└── values/                 # colors.xml, strings.xml, themes.xml
+```
 
-4. Pantallas y Módulos
-4.1 Login
+---
 
-Autenticación por ID y contraseña
+## 📱 Pantallas y Módulos
 
-Usuarios hardcoded para pruebas
+### 🏠 Home (HomeFragment)
+- Saludo dinámico según hora del día
+- Nombre del operario sincronizado desde Perfil via `onResume`
+- Card con peso total del día y barra de progreso (meta: 63 kg)
+- Stats: Registros hoy, Por Sync, Peligrosos
+- Accesos rápidos: Nuevo Registro, Importar, Reportes, Historial
+- Lista de últimos 5 registros con RecyclerView
 
-Persistencia de sesión con SharedPreferences
+### ➕ Nuevo Registro (RegistroFragment)
+- Selección de tipo via ChipGroup: Plástico, Orgánico, Papel, Metal, Peligroso, Vidrio, Pendiente
+- Campos: Peso (kg), Ubicación, Zona, Observaciones
+- Validación EPP obligatoria para residuos peligrosos (guantes, mascarilla, lentes)
+- Cámara para foto evidencia con FileProvider (`getCacheDir`)
+- Procesamiento de imagen en hilo secundario
+- Botones: **Guardar** (navega a éxito) y **Guardar + Nuevo** (limpia formulario)
 
-Redirección automática si existe sesión activa
+### 📋 Historial (HistorialFragment)
+- Lista completa de registros ordenados por fecha descendente
+- RecyclerView con ResiduoAdapter
+- Muestra: tipo, peso, fecha, zona, operario
 
-4.2 Home
+### 📊 Reportes (ReportesFragment)
+- Filtros: Hoy, 7 días, Este mes, Todo
+- Calendario con `DatePickerDialog` para fecha específica
+- **Gráfico de barras** (MPAndroidChart): kg por día
+- **Gráfico de dona** (MPAndroidChart): distribución por tipo con leyenda de colores
+- Exportar PDF e Exportar CSV con datos filtrados
 
-Saludo dinámico según la hora
+### 📥 Importar (ImportarFragment)
+- Importación de archivos CSV compatibles
+- Inserción masiva en Room
 
-Resumen de residuos del día
+### 👤 Perfil (ProfileFragment)
+- Foto de perfil: cámara o galería, guardada en `filesDir`
+- Procesamiento con muestreo (max 512px) para no saturar memoria
+- Cambio de nombre, teléfono y email
+- Cambio de contraseña con verificación
+- Switches: Notificaciones, Sync solo con WiFi
+- Cerrar sesión con confirmación
 
-Barra de progreso de meta diaria (63 kg)
+---
 
-Estadísticas rápidas
+## 🗄️ Modelo de Datos (Room)
 
-Accesos directos a módulos
+```java
+@Entity(tableName = "residuos")
+public class Residuo {
+    @PrimaryKey(autoGenerate = true) public int id;
+    public String tipo;           // plastico, organico, papel, metal, peligroso, vidrio, pendiente
+    public double pesoKg;
+    public String fecha;          // yyyy-MM-dd
+    public String planta;         // Planta A / B / C
+    public String zona;           // Zona A-E
+    public String operarioId;     // OP-01, OP-42, etc.
+    public String operarioNombre;
+    public String turno;          // Mañana / Tarde / Noche
+    public String observaciones;
+    public boolean eppConfirmado;
+    public boolean sincronizado;
+}
+```
 
-Últimos 5 registros recientes
+---
 
-4.3 Nuevo Registro
+## 🏭 Categorías de Residuos
 
-Selección de tipo mediante ChipGroup
+| Categoría | Peso típico | EPP requerido | Color en gráficos |
+|---|---|---|---|
+| Plástico | 0.5 – 15 kg | No | `#00D97E` 🟢 |
+| Orgánico | 2 – 50 kg | No | `#4CAF50` 🟢 |
+| Papel | 1 – 20 kg | No | `#2196F3` 🔵 |
+| Metal | 0.5 – 30 kg | No | `#9E9E9E` ⚫ |
+| Vidrio | 0.5 – 10 kg | No | `#00BCD4` 🔵 |
+| Peligroso | 0.1 – 5 kg | ✅ Guantes + Mascarilla + Lentes | `#FF5722` 🔴 |
+| Pendiente | 0.5 – 10 kg | No | Según clasificación final |
 
-Campos: peso, ubicación, zona y observaciones
+---
 
-Validación obligatoria de EPP para residuos peligrosos
+## 📦 Dependencias (build.gradle)
 
-Captura de foto evidencia con FileProvider
+```gradle
+// UI & Layout
+implementation 'androidx.appcompat:appcompat:1.6.1'
+implementation 'com.google.android.material:material:1.11.0'
+implementation 'androidx.recyclerview:recyclerview:1.3.2'
+implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-Guardado en Room con fecha automática
+// Navigation
+implementation 'androidx.navigation:navigation-fragment:2.7.6'
+implementation 'androidx.navigation:navigation-ui:2.7.6'
 
-4.4 Historial
+// Room (Base de datos local)
+implementation 'androidx.room:room-runtime:2.6.1'
+annotationProcessor 'androidx.room:room-compiler:2.6.1'
 
-Lista completa de registros
+// Lifecycle - MVVM
+implementation 'androidx.lifecycle:lifecycle-viewmodel:2.7.0'
+implementation 'androidx.lifecycle:lifecycle-livedata:2.7.0'
 
-Ordenados por fecha descendente
+// WorkManager
+implementation 'androidx.work:work-runtime:2.9.0'
 
-RecyclerView con adapter personalizado
+// Network
+implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 
-4.5 Reportes
+// PDF & CSV
+implementation 'com.itextpdf:itext7-core:7.2.5'
+implementation 'com.opencsv:opencsv:5.8'
 
-Filtros por periodo y fecha
+// Gráficos
+implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
-Gráficos de barras y dona (MPAndroidChart)
+// Imágenes
+implementation 'de.hdodenhof:circleimageview:3.1.0'
 
-Exportación a PDF e CSV
+// Animaciones
+implementation 'com.airbnb.android:lottie:6.3.0'
+```
 
-Estadísticas agregadas
+> ⚠️ **Agregar en `settings.gradle`** el repositorio de JitPack:
+> ```gradle
+> maven { url 'https://jitpack.io' }
+> ```
 
-4.6 Importar
+---
 
-Importación de archivos CSV
+## 🔧 Configuración AndroidManifest
 
-Inserción masiva con WorkManager
-
-Estructura compatible definida
-
-4.7 Perfil
-
-Foto de perfil persistente
-
-Edición de datos personales
-
-Cambio de contraseña
-
-Preferencias de sincronización
-
-Limpieza de caché
-
-Cierre de sesión seguro
-
-4.8 Pantalla de Éxito
-
-Confirmación visual del registro guardado
-
-Acceso rápido a Home o nuevo registro
-
-5. Arquitectura y Modelo de Datos
-
-Entidad Residuo
-| Campo         | Tipo    | Descripción                |
-| ------------- | ------- | -------------------------- |
-| id            | int     | PK autoincrement           |
-| tipo          | String  | Tipo de residuo            |
-| pesoKg        | double  | Peso en kg                 |
-| fecha         | String  | yyyy-MM-dd                 |
-| planta        | String  | Planta de origen           |
-| zona          | String  | Zona                       |
-| operarioId    | String  | ID operario                |
-| turno         | String  | Turno                      |
-| observaciones | String  | Notas o referencia de foto |
-| eppConfirmado | boolean | Validación EPP             |
-| sincronizado  | boolean | Estado de sincronización   |
-
-Flujo de Datos
-UI → ViewModel → Repository → DAO → Room (SQLite)
-
-6. Dependencias Principales
-
-Room
-
-LiveData / ViewModel
-
-Navigation Component
-
-WorkManager
-
-Retrofit
-
-iText7
-
-OpenCSV
-
-MPAndroidChart
-
-Lottie
-
-Repositorio adicional requerido:
-
-maven { url 'https://jitpack.io' }
-7. Permisos y Configuración
-
-Permisos usados:
-
+### Permisos requeridos
+```xml
 <uses-permission android:name="android.permission.CAMERA" />
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+```
 
-Uso obligatorio de FileProvider para cámara y exportación de archivos.
+### FileProvider (obligatorio para cámara)
+```xml
+<provider
+    android:name="androidx.core.content.FileProvider"
+    android:authorities="com.ecolim.ecoregapp.fileprovider"
+    android:exported="false"
+    android:grantUriPermissions="true">
+    <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/file_provider_paths"/>
+</provider>
+```
 
-8. Navegación
+### res/xml/file_provider_paths.xml
+```xml
+<paths>
+    <external-files-path name="my_images" path="Pictures/"/>
+    <cache-path name="cache_images" path="."/>
+    <files-path name="internal_files" path="."/>
+</paths>
+```
 
-La app utiliza Navigation Component con los siguientes destinos:
+---
 
-Home
+## 🧭 Navegación
 
-Historial
+| Fragment ID | Clase | Acceso |
+|---|---|---|
+| `homeFragment` | HomeFragment | Tab Inicio |
+| `historialFragment` | HistorialFragment | Tab Historial |
+| `importarFragment` | ImportarFragment | Tab Importar |
+| `reportesFragment` | ReportesFragment | Tab Reportes |
+| `profileFragment` | ProfileFragment | Tab Perfil |
+| `registroFragment` | RegistroFragment | Card "Nuevo Registro" en Home |
+| `successFragment` | SuccessFragment | Después de guardar registro |
 
-Importar
+> ℹ️ El FloatingActionButton fue eliminado. El acceso a Nuevo Registro se realiza únicamente desde la card en Home.
 
-Reportes
+---
 
-Perfil
+## 📷 Implementación de Cámara
 
-Registro
+### Foto de Perfil
+1. Permiso solicitado en runtime con `ActivityResultContracts.RequestPermission`
+2. Archivo temporal en `getCacheDir()` — evita errores de permisos en Android 10+
+3. URI compartida via FileProvider con `FLAG_GRANT_WRITE_URI_PERMISSION`
+4. Decodificación con `BitmapFactory.Options.inSampleSize` para reducir memoria
+5. Redimensionado automático a **máx 512px**
+6. Guardado final en `getFilesDir()/profile_photo.jpg`
+7. Ruta persistida en `SharedPreferences` con clave `foto_path_interna`
 
-Pantalla de éxito
+### Foto Evidencia en Registro
+- Mismo flujo que Perfil, redimensionado a máx 800px
+- Procesamiento en `Thread` secundario para no bloquear la UI
+- Referencia guardada en campo `observaciones`
 
-El acceso a “Nuevo Registro” se realiza desde Home.
+---
 
-9. Categorías de Residuos
+## 🔄 Sincronización Perfil → Home
 
-| Categoría | EPP requerido                    |
-| --------- | -------------------------------- |
-| Plástico  | No                               |
-| Orgánico  | No                               |
-| Papel     | No                               |
-| Metal     | No                               |
-| Vidrio    | No                               |
-| Peligroso | Sí (guantes, mascarilla, lentes) |
-| Pendiente | No                               |
+Los cambios de nombre en Perfil se reflejan automáticamente en Home:
 
-10. Archivos de Datos de Prueba
+1. `ProfileFragment` guarda el nombre en `SharedPreferences` (`profile_prefs`, clave `nombre_usuario`)
+2. `HomeFragment` implementa `onResume()`
+3. Cada vez que se navega de vuelta a Home, `onResume` lee las preferencias y actualiza el nombre
 
-| Archivo                 | Formato | Registros |
-| ----------------------- | ------- | --------- |
-| residuos_ecolim_100.csv | CSV     | 100       |
-| residuos_ecolim_400.csv | CSV     | 400       |
-| residuos_ecolim_100.pdf | PDF     | 100       |
-| residuos_ecolim_100.txt | TXT     | 100       |
+---
 
-11. Instalación del Proyecto
-Requisitos
+## 🐛 Bugs Resueltos
 
-Android Studio Hedgehog o superior
+| Problema | Causa | Solución |
+|---|---|---|
+| `android:imageTintList` not found | Incompatible con minSdk 24 | Eliminar atributo del XML |
+| `ClassNotFoundException` ProfileFragment | Archivo Java no copiado | Copiar a `ui/fragments/` |
+| `onBackPressed` crash en Fragment | `onClick` en XML no funciona en Fragments | Mover a Java: `btn_back.setOnClickListener` |
+| Cámara crashea la app | `getExternalFilesDir` requiere permisos extra en Android 10+ | Cambiar a `getCacheDir()` |
+| Foto no aparece después de tomarla | Bitmap en hilo principal, URI externa | Thread secundario + guardar copia en `filesDir` |
+| FAB tapa contenido | `marginBottom` insuficiente | FAB eliminado completamente |
+| Perfil crashea al abrir | `switch_modo_oscuro` en XML pero no en Java | Eliminar de ambos archivos |
+| Chips no se ven en Reportes | Texto blanco sobre fondo blanco | Fondo blanco opaco + texto verde |
+| Scroll no llega a "Cerrar sesión" | Sin `paddingBottom` en ScrollView | `paddingBottom="80dp"` + `clipToPadding="false"` |
+| `cannot find symbol iv_avatar_home` | ID inexistente en layout | Eliminar referencia del Java |
+| NullPointerException en ProfileFragment | `switchModoOscuro` referenciado sin existir en el XML | Eliminar declaración, binding y listeners del Java |
 
-JDK 8+
+---
 
-Android SDK (API 24–34)
+## 📂 Archivos de Datos de Prueba
 
-Pasos
+| Archivo | Formato | Registros | Periodo | Uso |
+|---|---|---|---|---|
+| `residuos_ecolim_100.csv` | CSV | 100 | 2025–2026 | Prueba básica de importación |
+| `residuos_ecolim_400.csv` | CSV | 400 | 2025–2026 | Prueba completa con todos los filtros |
+| `residuos_ecolim_100.pdf` | PDF | 100 | 2025–2026 | Reporte con tabla coloreada por tipo |
+| `residuos_ecolim_100.txt` | TXT | 100 | 2025–2026 | Reporte en texto plano con resumen |
 
-Clonar el proyecto
+### Estructura del CSV para importación
+```
+id,tipo,pesoKg,fecha,planta,zona,operarioId,turno,observaciones
+1,Plastico,5.20,2026-02-22,Planta A,Zona B,OP-42,Mañana,Sin novedad
+```
 
-Abrir en Android Studio
+### Distribución del CSV de 400 registros
+| Filtro | Registros |
+|---|---|
+| Hoy (2026-03-01) | 8 |
+| Últimos 7 días | ~51 |
+| Año 2026 | 113 |
+| Año 2025 | 287 |
 
-Verificar configuración de Gradle
+---
 
-Rebuild Project
+## 🎨 Paleta de Colores
 
-Ejecutar en emulador o dispositivo físico
+| Nombre | Hex | Uso |
+|---|---|---|
+| `primary` | `#1B6F4A` | Color principal, textos y acciones |
+| `accent` | `#00D97E` | Verde brillante para highlights |
+| `bg_screen` | `#F0F4F2` | Fondo de todas las pantallas |
+| `surface` | `#FFFFFF` | Cards y Bottom Navigation |
+| `text_primary` | `#1A1A1A` | Texto principal |
+| `text_hint` | `#888888` | Texto secundario |
+| `danger` | `#FF5A5A` | Cerrar sesión y peligrosos |
+| `divider` | `#E8E8E8` | Líneas divisoras |
 
-12. Próximos Pasos
+---
 
-Implementar modo oscuro
+## 🚀 Instalación y Compilación
 
-Sincronización con API REST
+### Requisitos
+- Android Studio Hedgehog o superior
+- JDK 8 o superior
+- Android SDK API 24 – 34
+- Gradle 8.x
 
-Estadísticas reales en perfil
+### Pasos
+```bash
+# 1. Abrir el proyecto en Android Studio
+# 2. Verificar gradle.properties
+android.useAndroidX=true
+android.enableJetifier=true
 
-Galería de fotos de evidencia
+# 3. Verificar settings.gradle incluye:
+maven { url 'https://jitpack.io' }
 
-Filtros avanzados en historial
+# 4. Sync y compilar
+Build > Rebuild Project
+Run > Run 'app'
+```
 
-Dashboard administrativo
+> 💡 **Tip de rendimiento:** La app puede verse lenta al correr desde Android Studio en modo Debug. Para probar el rendimiento real:
+> `Build > Build Bundle(s) / APK(s) > Build APK(s)`
 
-📜 Información Final
+---
 
-EcoRegApp v1.0
-Proyecto académico / empresarial
-ECOLIM S.A.C. — Marzo 2026
+## 🔮 Próximos Pasos
+
+- [ ] Implementar modo oscuro real con `AppCompatDelegate.setDefaultNightMode()`
+- [ ] Conectar con API REST para sincronización real
+- [ ] Stats reales en Perfil (leer de Room)
+- [ ] Galería de fotos de evidencia en Historial
+- [ ] Filtros de búsqueda en Historial (fecha, tipo, operario)
+- [ ] Dashboard de administrador con métricas globales
+- [ ] Exportar gráficos como imagen dentro del PDF
+- [ ] Notificaciones push para alertas de sincronización
+- [ ] ML Kit para clasificación automática de residuos por foto
+
+---
+
+## 👷 Desarrollado para
+
+**ECOLIM S.A.C.** — Gestión de Residuos Industriales  
+EcoRegApp v1.0 — Marzo 2026
+
+---
+
+*Documentación generada el 01/03/2026*
