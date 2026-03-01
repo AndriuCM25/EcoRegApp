@@ -1,7 +1,7 @@
 # 🌿 EcoRegApp
 
 > **Sistema de Gestión de Residuos Industriales**  
-> Desarrollado para **ECOLIM S.A.C.** | Android nativo en Java | Versión 1.0 | Marzo 2026
+> Desarrollado para **ECOLIM S.A.C.** | Android nativo en Java | Versión 1.1 | Marzo 2026
 
 ---
 
@@ -46,7 +46,7 @@ app/src/main/java/com/ecolim/ecoregapp/
 │       ├── entity/         # Residuo.java
 │       ├── dao/            # ResiduoDao.java
 │       └── database/       # AppDatabase.java
-├── utils/                  # SessionManager.java, FileManager.java
+├── utils/                  # SessionManager.java, FileManager.java, SafeNav.java
 └── viewmodel/              # ResiduoViewModel.java
 
 app/src/main/res/
@@ -69,6 +69,7 @@ app/src/main/res/
 - Stats: Registros hoy, Por Sync, Peligrosos
 - Accesos rápidos: Nuevo Registro, Importar, Reportes, Historial
 - Lista de últimos 5 registros con RecyclerView
+- Cálculo de estadísticas en el hilo principal con `isAdded()` como guarda
 
 ### ➕ Nuevo Registro (RegistroFragment)
 - Selección de tipo via ChipGroup: Plástico, Orgánico, Papel, Metal, Peligroso, Vidrio, Pendiente
@@ -76,22 +77,24 @@ app/src/main/res/
 - Validación EPP obligatoria para residuos peligrosos (guantes, mascarilla, lentes)
 - Cámara para foto evidencia con FileProvider (`getCacheDir`)
 - Procesamiento de imagen en hilo secundario
+- Navegación protegida con `SafeNav` para evitar crashes por doble click
 - Botones: **Guardar** (navega a éxito) y **Guardar + Nuevo** (limpia formulario)
 
 ### 📋 Historial (HistorialFragment)
 - Lista completa de registros ordenados por fecha descendente
 - RecyclerView con ResiduoAdapter
-- Muestra: tipo, peso, fecha, zona, operario
+- Chips de filtro por tipo de residuo
 
 ### 📊 Reportes (ReportesFragment)
 - Filtros: Hoy, 7 días, Este mes, Todo
 - Calendario con `DatePickerDialog` para fecha específica
 - **Gráfico de barras** (MPAndroidChart): kg por día
 - **Gráfico de dona** (MPAndroidChart): distribución por tipo con leyenda de colores
+- Chips de periodo con fondo blanco y texto verde para máxima legibilidad
 - Exportar PDF e Exportar CSV con datos filtrados
 
 ### 📥 Importar (ImportarFragment)
-- Importación de archivos CSV compatibles
+- Importación de archivos CSV, PDF y TXT compatibles
 - Inserción masiva en Room
 
 ### 👤 Perfil (ProfileFragment)
@@ -99,8 +102,9 @@ app/src/main/res/
 - Procesamiento con muestreo (max 512px) para no saturar memoria
 - Cambio de nombre, teléfono y email
 - Cambio de contraseña con verificación
-- Switches: Notificaciones, Sync solo con WiFi
+- Switch: Notificaciones, Sync solo con WiFi (**Modo oscuro eliminado** — no implementado)
 - Cerrar sesión con confirmación
+- Padding inferior de 80dp para que "Cerrar sesión" no quede tapado
 
 ---
 
@@ -186,6 +190,14 @@ implementation 'com.airbnb.android:lottie:6.3.0'
 > maven { url 'https://jitpack.io' }
 > ```
 
+> ⚠️ **Compatibilidad Java** — cambiar en `build.gradle (app)`:
+> ```gradle
+> compileOptions {
+>     sourceCompatibility JavaVersion.VERSION_11
+>     targetCompatibility JavaVersion.VERSION_11
+> }
+> ```
+
 ---
 
 ## 🔧 Configuración AndroidManifest
@@ -237,6 +249,25 @@ implementation 'com.airbnb.android:lottie:6.3.0'
 
 ---
 
+## 🛡️ SafeNav — Navegación Segura
+
+`SafeNav.java` en `utils/` previene crashes por doble click o navegación rápida:
+
+```java
+// En lugar de:
+Navigation.findNavController(v).navigate(R.id.destino);
+
+// Usar:
+SafeNav.go(Navigation.findNavController(v), R.id.destino);
+
+// O directamente en setOnClickListener:
+view.setOnClickListener(SafeNav.to(nav, R.id.destino));
+```
+
+Bloquea cualquier navegación que ocurra dentro de los **600ms** de la anterior. Si el destino ya no existe, atrapa la excepción silenciosamente.
+
+---
+
 ## 📷 Implementación de Cámara
 
 ### Foto de Perfil
@@ -276,10 +307,30 @@ Los cambios de nombre en Perfil se reflejan automáticamente en Home:
 | Foto no aparece después de tomarla | Bitmap en hilo principal, URI externa | Thread secundario + guardar copia en `filesDir` |
 | FAB tapa contenido | `marginBottom` insuficiente | FAB eliminado completamente |
 | Perfil crashea al abrir | `switch_modo_oscuro` en XML pero no en Java | Eliminar de ambos archivos |
+| `NullPointerException` switch modo oscuro | Switch declarado en Java pero no existe en XML | Eliminar declaración, binding y listeners |
 | Chips no se ven en Reportes | Texto blanco sobre fondo blanco | Fondo blanco opaco + texto verde |
 | Scroll no llega a "Cerrar sesión" | Sin `paddingBottom` en ScrollView | `paddingBottom="80dp"` + `clipToPadding="false"` |
 | `cannot find symbol iv_avatar_home` | ID inexistente en layout | Eliminar referencia del Java |
-| NullPointerException en ProfileFragment | `switchModoOscuro` referenciado sin existir en el XML | Eliminar declaración, binding y listeners del Java |
+| `cannot find symbol NavController` | Import faltante en HomeFragment | Agregar `import androidx.navigation.NavController` |
+| Colores cambian en el celular | Tema `DayNight` adaptaba colores al modo oscuro del sistema | Cambiar a `Theme.MaterialComponents.Light.NoActionBar` |
+| App se sale al navegar rápido | Doble click lanzaba navegación duplicada | `SafeNav.java` — bloquea navegaciones en menos de 600ms |
+| `RejectedExecutionException` en HomeFragment | `executor.shutdown()` en `onDestroyView` pero LiveData seguía disparando | Eliminar executor, calcular stats directamente en el hilo principal |
+| Login lento / UI congelada al arrancar | `isLoggedIn()` y validación corrían en hilo principal | Mover a `ExecutorService` con `Handler` para volver al main thread |
+
+---
+
+## ⚡ Optimizaciones de Rendimiento
+
+| Componente | Optimización |
+|---|---|
+| **LoginActivity** | Verificación de sesión y validación de credenciales en hilo secundario con `ExecutorService` |
+| **LoginActivity** | `FLAG_ACTIVITY_CLEAR_TASK` para limpiar back stack — evita volver al login con el botón atrás |
+| **LoginActivity** | Transición suave `fade_in / fade_out` en lugar de corte brusco |
+| **HomeFragment** | `isAdded()` antes de actualizar la UI para evitar crashes si el fragment ya fue destruido |
+| **HomeFragment** | `setHasFixedSize(false)` en RecyclerView para mediciones eficientes |
+| **RegistroFragment / ProfileFragment** | Imagen procesada en `Thread` secundario con `inSampleSize` |
+| **Tema** | `Light.NoActionBar` fuerza modo claro — sin cambios de colores por modo oscuro del sistema |
+| **Navegación** | `SafeNav` evita crashes por navegación duplicada |
 
 ---
 
@@ -313,6 +364,7 @@ id,tipo,pesoKg,fecha,planta,zona,operarioId,turno,observaciones
 | Nombre | Hex | Uso |
 |---|---|---|
 | `primary` | `#1B6F4A` | Color principal, textos y acciones |
+| `primary_dark` | `#145238` | Header toolbar de Perfil |
 | `accent` | `#00D97E` | Verde brillante para highlights |
 | `bg_screen` | `#F0F4F2` | Fondo de todas las pantallas |
 | `surface` | `#FFFFFF` | Cards y Bottom Navigation |
@@ -327,13 +379,14 @@ id,tipo,pesoKg,fecha,planta,zona,operarioId,turno,observaciones
 
 ### Requisitos
 - Android Studio Hedgehog o superior
-- JDK 8 o superior
+- JDK 11 o superior
 - Android SDK API 24 – 34
 - Gradle 8.x
 
 ### Pasos
 ```bash
 # 1. Abrir el proyecto en Android Studio
+
 # 2. Verificar gradle.properties
 android.useAndroidX=true
 android.enableJetifier=true
@@ -341,7 +394,13 @@ android.enableJetifier=true
 # 3. Verificar settings.gradle incluye:
 maven { url 'https://jitpack.io' }
 
-# 4. Sync y compilar
+# 4. Verificar compileOptions en build.gradle (app):
+compileOptions {
+    sourceCompatibility JavaVersion.VERSION_11
+    targetCompatibility JavaVersion.VERSION_11
+}
+
+# 5. Sync y compilar
 Build > Rebuild Project
 Run > Run 'app'
 ```
@@ -351,11 +410,29 @@ Run > Run 'app'
 
 ---
 
+## 📌 Git — Flujo de trabajo
+
+```bash
+# Guardar cambios
+git add .
+git commit -m "fix: descripción del cambio"
+git push
+
+# Convenciones de commits
+feat:     # Funcionalidad nueva
+fix:      # Corrección de bug
+refactor: # Mejora de código sin cambiar funcionalidad
+perf:     # Mejora de rendimiento
+docs:     # Documentación
+```
+
+---
+
 ## 🔮 Próximos Pasos
 
 - [ ] Implementar modo oscuro real con `AppCompatDelegate.setDefaultNightMode()`
 - [ ] Conectar con API REST para sincronización real
-- [ ] Stats reales en Perfil (leer de Room)
+- [ ] Stats reales en Perfil (leer de Room en lugar de valores hardcoded)
 - [ ] Galería de fotos de evidencia en Historial
 - [ ] Filtros de búsqueda en Historial (fecha, tipo, operario)
 - [ ] Dashboard de administrador con métricas globales
@@ -368,8 +445,8 @@ Run > Run 'app'
 ## 👷 Desarrollado para
 
 **ECOLIM S.A.C.** — Gestión de Residuos Industriales  
-EcoRegApp v1.0 — Marzo 2026
+EcoRegApp v1.1 — Marzo 2026
 
 ---
 
-*Documentación generada el 01/03/2026*
+*Última actualización: 01/03/2026*
