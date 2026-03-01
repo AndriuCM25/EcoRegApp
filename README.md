@@ -1,133 +1,219 @@
-# EcoRegApp — ECOLIM S.A.C.
-## Aplicación Android para gestión de residuos sólidos
+♻️ EcoRegApp
 
----
+Sistema de Gestión de Residuos Industriales
+📱 Android Nativo (Java)
+🏢 ECOLIM S.A.C.
+📦 Versión 1.0 — Marzo 2026
 
-## 📋 Descripción
-App móvil Android que digitaliza el registro de residuos sólidos en instalaciones industriales. Permite registrar, importar, exportar y reportar datos de residuos cumpliendo la norma **NTP 900.058**.
+📌 Descripción General
 
----
+EcoRegApp es una aplicación Android nativa desarrollada para ECOLIM S.A.C., diseñada para que operarios industriales puedan registrar, gestionar, analizar y exportar residuos industriales de forma eficiente, segura y en tiempo real.
 
-## 🚀 Cómo abrir en Android Studio
+La aplicación funciona correctamente en entornos con conectividad limitada, almacenando los datos localmente y sincronizándolos cuando hay conexión disponible.
 
-1. Abrir **Android Studio** (versión Hedgehog 2023.1.1 o superior)
-2. `File → Open` → seleccionar la carpeta `EcoRegApp/`
-3. Esperar que Gradle sincronice las dependencias (puede tardar 2-3 minutos)
-4. Conectar un dispositivo Android (API 24+) o usar el emulador
-5. Presionar ▶️ **Run**
+🛠️ Tecnologías Utilizadas
 
----
+Lenguaje: Java
 
-## 🔐 Credenciales de prueba
-- **ID Operario:** OP-01, OP-42, OP-10 o ADMIN
-- **Contraseña:** `ecolim2026`
+Plataforma: Android
 
----
+Arquitectura: MVVM
 
-## 📦 Estructura del proyecto
+Base de datos: Room (SQLite)
 
-```
-EcoRegApp/
-├── app/src/main/
-│   ├── java/com/ecolim/ecoregapp/
-│   │   ├── data/
-│   │   │   ├── local/
-│   │   │   │   ├── entity/Residuo.java       ← Modelo de datos Room
-│   │   │   │   ├── dao/ResiduoDao.java        ← Queries SQL
-│   │   │   │   └── AppDatabase.java           ← Base de datos SQLite
-│   │   │   └── repository/ResiduoRepository.java
-│   │   ├── viewmodel/ResiduoViewModel.java    ← MVVM ViewModel
-│   │   ├── ui/
-│   │   │   ├── activities/
-│   │   │   │   ├── LoginActivity.java
-│   │   │   │   └── MainActivity.java
-│   │   │   ├── fragments/
-│   │   │   │   ├── HomeFragment.java          ← Dashboard
-│   │   │   │   ├── RegistroFragment.java      ← Formulario nuevo residuo
-│   │   │   │   ├── ImportarFragment.java      ← Importar CSV/PDF
-│   │   │   │   ├── ReportesFragment.java      ← Reportes + exportar
-│   │   │   │   ├── HistorialFragment.java     ← Lista con filtros
-│   │   │   │   └── SuccessFragment.java
-│   │   │   └── adapters/ResiduoAdapter.java
-│   │   └── utils/
-│   │       ├── FileManager.java               ← Import/Export CSV y PDF
-│   │       └── SessionManager.java            ← Sesión del operario
-│   └── res/
-│       ├── layout/                            ← Todos los XMLs de pantallas
-│       ├── navigation/nav_graph.xml           ← Navegación entre pantallas
-│       ├── menu/bottom_nav_menu.xml           ← Menú inferior
-│       ├── values/
-│       │   ├── colors.xml
-│       │   ├── strings.xml
-│       │   └── themes.xml
-│       └── drawable/eco_reg_logo.png
-```
+Navegación: Navigation Component + BottomNavigationView
 
----
+Gráficos: MPAndroidChart
 
-## ⚙️ Funciones principales
+Exportaciones: PDF (iText7) y CSV (OpenCSV)
 
-### 📝 Registro de residuos
-- Selección de tipo: Plástico, Orgánico, Papel, Metal, Vidrio, Peligroso
-- Ingreso de peso en kg (calcula volumen automáticamente)
-- Campos de ubicación y zona
-- Para residuos **peligrosos**: checklist EPP obligatorio (guantes, mascarilla, lentes)
+📱 Compatibilidad Android
+Parámetro	Versión
+minSdk	API 24 (Android 7.0)
+targetSdk	API 34 (Android 14)
+🔐 Credenciales de Acceso (Demo)
+Usuario	Contraseña	Rol	Turno	Planta
+OP-01	ecolim2026	Operario	Mañana	Planta A
+OP-42	ecolim2026	Operario	Tarde	Planta A
+OP-10	ecolim2026	Operario	Noche	Planta B
+ADMIN	ecolim2026	Administrador	Mañana	Planta C
+📂 Estructura del Proyecto
+app/src/main/java/com/ecolim/ecoregapp/
+│
+├── ui/
+│   ├── activities/
+│   ├── fragments/
+│   └── adapters/
+│
+├── data/
+│   └── local/
+│       ├── entity/
+│       ├── dao/
+│       └── database/
+│
+├── viewmodel/
+├── utils/
+│
+app/src/main/res/
+├── layout/
+├── drawable/
+├── navigation/
+├── menu/
+├── xml/
+└── values/
 
-### ⬇️ Importar datos
-- **CSV**: formato con columnas tipo, peso, fecha, ubicacion, zona
-- **PDF/TXT**: una línea por registro `tipo,peso,fecha,ubicacion,zona`
-- Vista previa de cantidad de registros antes de importar
+Arquitectura MVVM con separación clara de responsabilidades.
 
-### 📊 Reportes y exportación
-- Filtros por período: Hoy / 7 días / Este mes / Todo
-- Filtros por tipo de residuo
-- **Exportar PDF**: reporte completo con resumen y tabla detallada
-- **Exportar CSV**: datos tabulados para Excel o Google Sheets
-- Compartir directamente por WhatsApp, Email, Drive, etc.
+🧩 Módulos Principales
+🔑 Login
 
-### 📋 Historial
-- Búsqueda en tiempo real
-- Filtros por tipo y estado de sincronización
-- Vista detallada de cada registro
-- Eliminar registros
+Autenticación por ID y contraseña
 
----
+Persistencia de sesión con SharedPreferences
 
-## 🛠️ Tecnologías usadas
+Login automático si hay sesión activa
 
-| Componente | Librería |
-|---|---|
-| UI | Material Design 3 |
-| Navegación | Navigation Component |
-| Base de datos local | Room (SQLite) |
-| Arquitectura | MVVM + LiveData |
-| Sync background | WorkManager |
-| API REST | Retrofit 2 |
-| Exportar PDF | iText 7 |
-| Importar/Exportar CSV | OpenCSV |
+🏠 Home
 
----
+Saludo dinámico según hora
 
-## 📄 Formato CSV para importar
+Resumen de residuos del día
 
-```csv
-tipo,peso,fecha,ubicacion,zona
-plastico,5.2,2026-02-22 10:30:00,Planta A,Zona B
-organico,12.0,2026-02-22 11:15:00,Planta A,Zona A
-peligroso,2.5,2026-02-22 12:40:00,Planta C,Zona C
-papel,8.4,2026-02-21 09:10:00,Planta A,Pasillo 1
-metal,14.2,2026-02-21 16:05:00,Planta D,Zona D
-```
+Acciones rápidas
 
----
+Últimos registros recientes
 
-## 📌 Notas para el desarrollo
+➕ Nuevo Registro
 
-- La sincronización con API REST está preparada en `ResiduoRepository` pero requiere un backend real
-- El endpoint configurado es: `https://ecolim-backend.eco/api/v1`
-- Los íconos vectoriales (`@drawable/ic_*`) deben crearse en Android Studio via `File → New → Vector Asset`
-- El logo `eco_reg_logo.png` ya está incluido en `res/drawable/`
+Selección de tipo de residuo
 
----
+Validaciones según peligrosidad
 
-*EcoRegApp v1.0.0 · ECOLIM S.A.C. · NTP 900.058 · 2026*
+Captura de foto evidencia
+
+Guardado local con Room
+
+📜 Historial
+
+Lista completa de registros
+
+Ordenados por fecha
+
+RecyclerView optimizado
+
+📊 Reportes
+
+Filtros por fecha y tipo
+
+Gráficos de barras y dona
+
+Exportación a PDF y CSV
+
+📥 Importar
+
+Importación masiva desde CSV
+
+Procesamiento en segundo plano con WorkManager
+
+👤 Perfil
+
+Foto de perfil persistente
+
+Edición de datos personales
+
+Preferencias de sincronización
+
+Cierre de sesión seguro
+
+🗂️ Modelo de Datos (Residuo)
+Campo	Tipo	Descripción
+id	int	PK autoincrement
+tipo	String	Categoría del residuo
+pesoKg	double	Peso en kg
+fecha	String	yyyy-MM-dd
+planta	String	Planta
+zona	String	Zona
+operarioId	String	ID del operario
+turno	String	Turno
+observaciones	String	Notas / Foto
+eppConfirmado	boolean	Seguridad validada
+sincronizado	boolean	Estado de sync
+📦 Dependencias Principales
+
+Room
+
+LiveData / ViewModel
+
+Navigation Component
+
+WorkManager
+
+Retrofit
+
+iText7
+
+OpenCSV
+
+MPAndroidChart
+
+Lottie
+
+Repositorio adicional requerido:
+
+maven { url 'https://jitpack.io' }
+🔐 Permisos Requeridos
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+Uso obligatorio de FileProvider para cámara y archivos.
+
+📄 Archivos de Prueba Incluidos
+Archivo	Formato	Registros
+residuos_ecolim_100.csv	CSV	100
+residuos_ecolim_400.csv	CSV	400
+residuos_ecolim_100.pdf	PDF	100
+residuos_ecolim_100.txt	TXT	100
+⚙️ Instalación y Ejecución
+Requisitos
+
+Android Studio Hedgehog+
+
+JDK 8+
+
+Android SDK (API 24–34)
+
+Pasos
+
+Clonar el repositorio
+
+Abrir en Android Studio
+
+Verificar gradle.properties
+
+Ejecutar Rebuild Project
+
+Run en emulador o dispositivo físico
+
+🚀 Próximas Mejoras
+
+🌙 Modo oscuro real
+
+🌐 Sincronización con API REST
+
+📊 Estadísticas reales en Perfil
+
+🖼️ Galería de evidencias
+
+🔔 Notificaciones push
+
+🔍 Filtros avanzados en Historial
+
+🧠 Clasificación con ML Kit
+
+📈 Dashboard administrativo
+
+📜 Licencia
+
+Proyecto académico / empresarial
+© ECOLIM S.A.C. — 2026
