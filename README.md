@@ -56,6 +56,8 @@ app/src/main/java/com/ecolim/ecoregapp/
 │
 ├── viewmodel/             ResiduoViewModel.java
 ├── utils/                 SessionManager, FileManager
+
+
 4. Pantallas y Módulos
 4.1 Login
 
