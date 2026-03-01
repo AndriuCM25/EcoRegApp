@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class HomeFragment extends Fragment {
 
@@ -42,8 +40,6 @@ public class HomeFragment extends Fragment {
     private static final String PREFS_PROFILE = "profile_prefs";
     private static final String KEY_NOMBRE    = "nombre_usuario";
 
-    // Executor para calcular stats sin bloquear la UI
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Nullable
@@ -109,46 +105,27 @@ public class HomeFragment extends Fragment {
         final String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
         viewModel.todosLosResiduos.observe(getViewLifecycleOwner(), lista -> {
-            if (lista == null) return;
+            if (lista == null || !isAdded()) return;
 
-            // Calcular stats en hilo secundario para no bloquear la UI
-            executor.execute(() -> {
-                double pesoHoy = 0;
-                int countHoy = 0, peligrosos = 0, pendientes = 0;
+            double pesoHoy = 0;
+            int countHoy = 0, peligrosos = 0, pendientes = 0;
 
-                // Primeros 5 para el RecyclerView
-                List<Residuo> recientes = new ArrayList<>();
-                int size = Math.min(lista.size(), 5);
-                for (int i = 0; i < size; i++) recientes.add(lista.get(i));
+            List<Residuo> recientes = new ArrayList<>();
+            int size = Math.min(lista.size(), 5);
+            for (int i = 0; i < size; i++) recientes.add(lista.get(i));
 
-                // Stats
-                for (Residuo r : lista) {
-                    if (r.fecha != null && r.fecha.startsWith(hoy)) {
-                        pesoHoy += r.pesoKg;
-                        countHoy++;
-                    }
-                    if ("peligroso".equalsIgnoreCase(r.tipo)) peligrosos++;
-                    if (!r.sincronizado) pendientes++;
-                }
+            for (Residuo r : lista) {
+                if (r.fecha != null && r.fecha.startsWith(hoy)) { pesoHoy += r.pesoKg; countHoy++; }
+                if ("peligroso".equalsIgnoreCase(r.tipo)) peligrosos++;
+                if (!r.sincronizado) pendientes++;
+            }
 
-                final double finalPeso  = pesoHoy;
-                final int finalCount    = countHoy;
-                final int finalPelig    = peligrosos;
-                final int finalPend     = pendientes;
-                final int progreso      = (int) Math.min((pesoHoy / 63.0) * 100, 100);
-                final List<Residuo> rec = recientes;
-
-                mainHandler.post(() -> {
-                    if (!isAdded()) return; // Fragment ya no está adjunto
-
-                    adapter.submitList(rec);
-                    tvPesoHoy.setText(String.format("%.1f kg", finalPeso));
-                    tvRegistrosHoy.setText(String.valueOf(finalCount));
-                    tvPendientes.setText(String.valueOf(finalPend));
-                    tvPeligrosos.setText(String.valueOf(finalPelig));
-                    progressMeta.setProgress(progreso);
-                });
-            });
+            adapter.submitList(recientes);
+            tvPesoHoy.setText(String.format("%.1f kg", pesoHoy));
+            tvRegistrosHoy.setText(String.valueOf(countHoy));
+            tvPendientes.setText(String.valueOf(pendientes));
+            tvPeligrosos.setText(String.valueOf(peligrosos));
+            progressMeta.setProgress((int) Math.min((pesoHoy / 63.0) * 100, 100));
         });
     }
 
@@ -164,6 +141,5 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        executor.shutdown();
     }
 }
